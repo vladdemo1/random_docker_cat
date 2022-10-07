@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: "my_app"
+    command: bash -c "python3 /flask_app/manage.py"
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./flask_app:/flask_app
+    environment:
+      PYTHONUNBUFFERED: 1
+
+  nginx:
+    restart: always
+    build:
+      context: nginx/
+      dockerfile: Dockerfile
+    depends_on:
+      - app
+    links:
+      - app
+    ports:
+      - "80:80"
